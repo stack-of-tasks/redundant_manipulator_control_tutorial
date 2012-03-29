@@ -7,6 +7,8 @@ SET (LIBRARY_NAME ${PROJECT_NAME})
 ADD_LIBRARY (${LIBRARY_NAME} SHARED
   cubic-interpolation.cc
   cubic-interpolation.hh
+  cylindrical-cubic-interpolation.cc
+  cylindrical-cubic-interpolation.hh
   )
 
 PKG_CONFIG_USE_DEPENDENCY (${LIBRARY_NAME} sot-core)

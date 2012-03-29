@@ -61,6 +61,10 @@ namespace dynamicgraph {
 		    (*this, &CubicInterpolation::start, docstring));
       }
 
+      CubicInterpolation::~CubicInterpolation ()
+      {
+      }
+
       std::string CubicInterpolation::getDocString () const
       {
 	std::string doc =
@@ -106,6 +110,11 @@ namespace dynamicgraph {
       }
 
       void CubicInterpolation::start (const double& duration)
+      {
+	doStart (duration);
+      }
+
+      void CubicInterpolation::doStart (const double& duration)
       {
 	// Check that sampling period has been initialized
 	if (samplingPeriod_ <= 0)
