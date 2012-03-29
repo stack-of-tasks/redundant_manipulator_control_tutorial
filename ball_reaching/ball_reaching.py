@@ -12,7 +12,7 @@ from dynamic_graph.sot.core import FeatureVisualPoint
 from dynamic_graph.sot.dynamics.hrp2 import Hrp2Laas
 from dynamic_graph.sot.dynamics.solver import Solver
 from dynamic_graph.sot.motion_planner import VispPointProjection
-from dynamic_graph.sot.reaching import CubicInterpolationSE3
+from dynamic_graph.sot.reaching import CylindricalCubicInterpolationSE3
 
 I4 = reduce(lambda m, i: m + (i*(0.,)+(1.,)+ (3-i)*(0.,),), range(4), ())
 ballPosition = ((1.,0.,0.,0.4),
@@ -60,11 +60,12 @@ class Motion (object):
                              robot.frames ['rightHand'].jacobian)
         self.featureRightHand.selec.value = '000111'
 
-        self.interpolation = CubicInterpolationSE3 ('interpolation')
+        self.interpolation = CylindricalCubicInterpolationSE3 ('interpolation')
         self.interpolation.setSamplingPeriod (0.005)
         plug (self.interpolation.reference,
               self.featureRightHand.signal('reference'))
         plug (self.featureRightHand.position, self.interpolation.init)
+        plug (self.robot.waist.position, self.interpolation.localFrame)
 
         self.taskRightHand = TaskPD ('taskRightHand')
         self.taskRightHand.add (self.featureRightHand.name)

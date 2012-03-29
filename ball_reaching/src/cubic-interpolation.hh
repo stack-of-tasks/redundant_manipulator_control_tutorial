@@ -4,8 +4,8 @@
 // Author: Florent Lamiraux
 //
 
-#ifndef SOT_REACHING_HH
-# define SOT_REACHING_HH
+#ifndef SOT_REACHING_CUBIC_INTERPOLATION_HH
+# define SOT_REACHING_CUBIC_INTERPOLATION_HH
 
 # include <dynamic-graph/entity.h>
 # include <dynamic-graph/signal-ptr.h>
@@ -21,6 +21,7 @@ namespace dynamicgraph {
       {
 	DYNAMIC_GRAPH_ENTITY_DECL();
       public:
+	virtual ~CubicInterpolation ();
 	CubicInterpolation (const std::string& name);
 	/// Start tracking
 	void start (const double& duration);
@@ -28,7 +29,8 @@ namespace dynamicgraph {
 	virtual std::string getDocString () const;
 	/// Set sampling period of control discretization
 	void setSamplingPeriod (const double& period);
-      private:
+      protected:
+	virtual void doStart (const double& duration);
 	dynamicgraph::Signal < MatrixHomogeneous, int > referenceSOUT_;
 	dynamicgraph::Signal < maal::boost::Vector, int > errorDotSOUT_;
 	dynamicgraph::SignalPtr < MatrixHomogeneous, int > initSIN_;
@@ -54,4 +56,4 @@ namespace dynamicgraph {
   } // namespace sot
 } // namespace dynamicgraph
 
-#endif // SOT_REACHING_HH
+#endif // SOT_REACHING_CUBIC_INTERPOLATION_HH

@@ -1,0 +1,15 @@
+<!-- -*-xml-*-
+     Launch ball catching tutorial for HRP2
+  -->
+<launch>
+  <include file="$(find openhrp_bridge)/launch/simu.launch"/>
+
+  <node pkg="ball_reaching" type="hueblob.py"
+	name="hueblob"
+	machine="hrp2014v"/>
+
+  <node pkg="dynamic_graph_bridge" type="tf_broadcaster"
+	name="frame_broadcaster"
+	machine="hrp2014v"
+	ns="dynamic_graph"/>
+</launch>
