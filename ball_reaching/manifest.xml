@@ -1,0 +1,18 @@
+<package>
+  <description brief="ball_reaching">
+
+     This tutorial implements a control graph aimed at grasping a ball
+     detected by vision on a humanoid robot.
+
+  </description>
+  <author>Florent Lamiraux</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/ball_reaching</url>
+  <depend package="dynamic_graph_bridge"/>
+  <export>
+    <python path="${prefix}"/>
+  </export>
+</package>
+
+

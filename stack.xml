@@ -1,0 +1,9 @@
+<stack>
+  <description brief="redundant_manipulator_control_tutorial">Tutorial for stack redundant_manipulator_control.</description>
+  <author>Maintained by Florent Lamiraux</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/redundant_manipulator_control_tutorial</url>
+  <depend stack="ros" />
+
+</stack>
