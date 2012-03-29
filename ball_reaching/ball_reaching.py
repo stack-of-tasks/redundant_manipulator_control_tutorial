@@ -13,9 +13,12 @@ from dynamic_graph.sot.dynamics.hrp2 import Hrp2Laas
 from dynamic_graph.sot.dynamics.solver import Solver
 from dynamic_graph.sot.motion_planner import VispPointProjection
 from dynamic_graph.sot.reaching import CubicInterpolationSE3
-from dynamic_graph.ros import Ros
 
 I4 = reduce(lambda m, i: m + (i*(0.,)+(1.,)+ (3-i)*(0.,),), range(4), ())
+ballPosition = ((1.,0.,0.,0.4),
+                (0.,1.,0.,-0.3),
+                (0.,0.,1.,1.2),
+                (0.,0.,0.,1.))
 
 # Prologue
 if __name__ == '__main__':
@@ -49,11 +52,6 @@ class Motion (object):
     def __init__ (self, robot, solver):
         self.robot = robot
         self.solver = solver
-        self.ros = Ros (robot)
-        self.ros.rosExport.add ('matrixHomoStamped', 'ballInCamera',
-                                '/wide/blobs/rose/transform')
-        self.ros.rosExport.add ('matrixHomoStamped', 'ballInWorld',
-                                '/wide/blobs/rose/transform_world')
         self.rightGripperId = 28
         # Right hand task
         self.featureRightHand = \
@@ -66,7 +64,6 @@ class Motion (object):
         self.interpolation.setSamplingPeriod (0.005)
         plug (self.interpolation.reference,
               self.featureRightHand.signal('reference'))
-        plug (self.ros.rosExport.ballInWorld, self.interpolation.goal)
         plug (self.featureRightHand.position, self.interpolation.init)
 
         self.taskRightHand = TaskPD ('taskRightHand')
@@ -80,25 +77,6 @@ class Motion (object):
         self.robot.waist.value = I4
         self.solver.push (self.robot.tasks ['waist'])
 
-        # Ball tracking
-        refBallInCamera = FeatureVisualPoint ('featureBallInCameraRef')
-        refBallInCamera.xy.value = (0., 0.)
-        self.pinholeProjection = VispPointProjection('pinholeProjection')
-        plug (self.ros.rosExport.ballInCamera, self.pinholeProjection.cMo)
-        plug (self.ros.rosExport.ballInCameraTimestamp,
-              self.pinholeProjection.cMoTimestamp)
-        self.ballInCamera = FeatureVisualPoint ('featureBallInCamera')
-        plug (self.pinholeProjection.xy, self.ballInCamera.xy)
-        self.ballInCamera.Z.value = 1.
-        self.ballInCamera.setReference (refBallInCamera.name)
-        self.ballInCamera.selec.value = '11'
-        plug (self.robot.frames ['cameraTopRight'].jacobian,
-              self.ballInCamera.Jq)
-
-        self.taskBallTracking = TaskPD ('taskBallTracking')
-        self.taskBallTracking.add (self.ballInCamera.name)
-        self.taskBallTracking.controlGain.value = 1.0
-
         # Posture task
         self.featurePosture = FeaturePosture ('featurePosture')
         plug (self.robot.device.state, self.featurePosture.state)
@@ -108,7 +86,7 @@ class Motion (object):
         self.postureTask.controlGain.value = 1.
 
     def start (self):
-        #self.solver.push (self.taskBallTracking)
+        self.interpolation.goal.value = ballPosition
         # open hand
         for dof in range (6, self.robot.dimension):
             self.featurePosture.selectDof (dof, False)
@@ -121,10 +99,9 @@ class Motion (object):
         self.waitForBall ()
         # move hand
         handInitPos = self.robot.frames ['rightHand'].position.value
-        self.interpolation.start (2.)
-        time.sleep (2.)
+        self.interpolation.start (3.)
+        time.sleep (3.)
         # close hand
-        self.solver.sot.remove (self.taskBallTracking.name)
         config [self.rightGripperId] = 0.3
         self.featurePosture.setPosture (tuple (config))
         self.postureTask.controlGain.value = 4.
@@ -134,11 +111,9 @@ class Motion (object):
         for dof in range (6, len (self.robot.halfSitting)):
             self.featurePosture.selectDof (dof, True)
         self.interpolation.goal.value = handInitPos
-        self.interpolation.start (2.)
-        time.sleep (2.0)
-        self.solver.remove (self.taskBallTracking)
+        self.interpolation.start (3.)
+        time.sleep (3.0)
         self.solver.remove (self.postureTask)
-        plug (self.ros.rosExport.ballInWorld, self.interpolation.goal)
 
     def waitForBall (self):
         pass
