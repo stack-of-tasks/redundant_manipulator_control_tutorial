@@ -101,44 +101,49 @@ class Motion (object):
         self.taskBallTracking.controlGain.value = 1.0
 
         # Posture task
+        self.posture = list (self.robot.halfSitting [::])
         self.featurePosture = FeaturePosture ('featurePosture')
         plug (self.robot.device.state, self.featurePosture.state)
-        self.featurePosture.setPosture (self.robot.halfSitting)
+        self.featurePosture.setPosture (tuple (self.posture))
+        for dof in range (6, self.robot.dimension):
+            self.featurePosture.selectDof (dof, False)
         self.postureTask = TaskPD ('postureTask')
         self.postureTask.add (self.featurePosture.name)
         self.postureTask.controlGain.value = 1.
-
-    def start (self):
-        #self.solver.push (self.taskBallTracking)
-        # open hand
-        for dof in range (6, self.robot.dimension):
-            self.featurePosture.selectDof (dof, False)
-        self.featurePosture.selectDof (self.rightGripperId, True)
-        config = list (self.robot.halfSitting [::])
-        config [self.rightGripperId] = 0.7
-        self.featurePosture.setPosture (tuple (config))
         self.solver.push (self.postureTask)
 
-        self.waitForBall ()
+    def trackBall (self):
+        self.solver.push (self.taskBallTracking)
+
+    def openHand (self):
+       # open hand
+        self.featurePosture.selectDof (self.rightGripperId, True)
+        self.posture [self.rightGripperId] = 0.7
+        self.featurePosture.setPosture (tuple (self.posture))
+
+    def reach (self):
         # move hand
-        handInitPos = self.robot.frames ['rightHand'].position.value
+        self.handInitPos = self.robot.frames ['rightHand'].position.value
         self.interpolation.start (2.)
-        time.sleep (2.)
-        # close hand
-        self.solver.sot.remove (self.taskBallTracking.name)
-        config [self.rightGripperId] = 0.3
-        self.featurePosture.setPosture (tuple (config))
+
+    def stopTracking (self):
+        self.solver.remove (self.taskBallTracking)
+
+    def closeHand (self):
+        self.posture [self.rightGripperId] = 0.3
+        self.featurePosture.setPosture (tuple (self.posture))
         self.postureTask.controlGain.value = 4.
-        time.sleep (.5)
+
+    def moveBack (self):
         # move hand back
         self.postureTask.controlGain.value = 1.
-        for dof in range (6, len (self.robot.halfSitting)):
+        for dof in range (6, len (self.posture)):
             self.featurePosture.selectDof (dof, True)
-        self.interpolation.goal.value = handInitPos
+        self.interpolation.goal.value = self.handInitPos
         self.interpolation.start (2.)
-        time.sleep (2.0)
+
+    def stopMotion (self):
         self.solver.remove (self.taskBallTracking)
-        self.solver.remove (self.postureTask)
         plug (self.ros.rosExport.ballInWorld, self.interpolation.goal)
 
     def waitForBall (self):
