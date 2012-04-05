@@ -4,6 +4,7 @@
 #!/usr/bin/env python
 
 import time
+from math import fabs
 from dynamic_graph import plug
 from dynamic_graph.sot.core.operator import Compose_R_and_T,\
     Multiply_of_matrixHomo
@@ -47,6 +48,7 @@ if __name__ == '__main__':
 
 class Motion (object):
     def __init__ (self, robot, solver):
+        self.samplingPeriod = .005
         self.robot = robot
         self.solver = solver
         self.ros = Ros (robot)
@@ -63,7 +65,7 @@ class Motion (object):
         self.featureRightHand.selec.value = '000111'
 
         self.interpolation = CylindricalCubicInterpolationSE3 ('interpolation')
-        self.interpolation.setSamplingPeriod (0.005)
+        self.interpolation.setSamplingPeriod (self.samplingPeriod)
         plug (self.interpolation.reference,
               self.featureRightHand.signal('reference'))
         plug (self.ros.rosExport.ballInWorld, self.interpolation.goal)
@@ -147,8 +149,31 @@ class Motion (object):
         plug (self.ros.rosExport.ballInWorld, self.interpolation.goal)
 
     def waitForBall (self):
-        pass
-        
+        x = 0.4; y = -0.2; z = 1.2
+        t = self.taskRightHand.error.time
+        self.ros.rosExport.ballInWorld.recompute (t)
+        pos = map (lambda i:self.ros.rosExport.ballInWorld.value [i][3],
+                   range (3))
+        while (fabs((x-pos[0])*(x-pos[0]) + (y-pos[1])*(y-pos[1]) +
+                    (z-pos[2])*(z-pos[2])) > .0025):
+            time.sleep (.1)
+            t = self.taskRightHand.error.time
+            self.ros.rosExport.ballInWorld.recompute (t)
+            pos = map (lambda i:self.ros.rosExport.ballInWorld.value [i][3],
+                       range (3))
+        t_start = self.taskRightHand.error.time
+        # Ball is in neighborhood
+        while ((fabs((x-pos[0])*(x-pos[0]) + (y-pos[1])*(y-pos[1]) +
+                     (z-pos[2])*(z-pos[2])) <= .0025)):
+            time.sleep (.1)
+            t = self.taskRightHand.error.time
+            if (t - t_start)*self.samplingPeriod >= 1.:
+                return True
+            self.ros.rosExport.ballInWorld.recompute (t)
+            pos = map (lambda i:self.ros.rosExport.ballInWorld.value [i][3],
+                       range (3))
+        return False
+
     def play(self, totalTime):
         nbSteps = int(totalTime/timeStep) + 1
         path = []
