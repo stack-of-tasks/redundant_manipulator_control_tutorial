@@ -10,6 +10,7 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/ball_reaching</url>
   <depend package="dynamic_graph_bridge"/>
+  <depend package="hueblob"/>
   <export>
     <python path="${prefix}"/>
   </export>

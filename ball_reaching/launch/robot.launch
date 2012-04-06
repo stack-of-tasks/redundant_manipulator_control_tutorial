@@ -6,10 +6,7 @@
 	 textfile="$(find hrp2_14_description)/urdf/hrp2.urdf" />
 
   <include file="$(find openhrp_bridge)/launch/start.launch"/>
-
-  <node pkg="ball_reaching" type="hueblob.py"
-	name="hueblob"
-	machine="hrp2014v"/>
+  <include file="$(find hueblob)/launch/track2-nodelet.launch"/>
 
   <node pkg="dynamic_graph_bridge" type="tf_broadcaster"
 	name="frame_broadcaster"
