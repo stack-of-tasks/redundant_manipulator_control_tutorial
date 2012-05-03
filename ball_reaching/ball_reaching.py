@@ -47,6 +47,7 @@ if __name__ == '__main__':
     solver.push(robot.balanceTask)
 
 class Motion (object):
+    reachTime = 3.
     def __init__ (self, robot, solver):
         self.samplingPeriod = .005
         self.robot = robot
@@ -88,6 +89,7 @@ class Motion (object):
         refBallInCamera.xy.value = (0., 0.)
         self.pinholeProjection = VispPointProjection('pinholeProjection')
         plug (self.ros.rosExport.ballInCamera, self.pinholeProjection.cMo)
+        plug (self.ros.rosTime.time, self.pinholeProjection.time)
         plug (self.ros.rosExport.ballInCameraTimestamp,
               self.pinholeProjection.cMoTimestamp)
         self.ballInCamera = FeatureVisualPoint ('featureBallInCamera')
@@ -126,7 +128,7 @@ class Motion (object):
     def reach (self):
         # move hand
         self.handInitPos = self.robot.frames ['rightHand'].position.value
-        self.interpolation.start (2.)
+        self.interpolation.start (self.reachTime)
 
     def stopTracking (self):
         self.solver.remove (self.taskBallTracking)
@@ -173,6 +175,18 @@ class Motion (object):
             pos = map (lambda i:self.ros.rosExport.ballInWorld.value [i][3],
                        range (3))
         return False
+
+    def catchBall (self):
+        self.trackBall ()
+        self.openHand ()
+        while not self.waitForBall ():
+            pass
+        self.reach ()
+        time.sleep (self.reachTime)
+        self.closeHand ()
+        time.sleep (1.)
+        self.moveBack ()
+        self.stopMotion ()
 
     def play(self, totalTime):
         nbSteps = int(totalTime/timeStep) + 1
