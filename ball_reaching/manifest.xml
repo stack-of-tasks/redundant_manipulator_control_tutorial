@@ -2,7 +2,9 @@
   <description brief="ball_reaching">
 
      This tutorial implements a control graph aimed at grasping a ball
-     detected by vision on a humanoid robot.
+     detected by vision on humanoid robot HRP2. When the ball is hold at a given
+     position with respect to robot waist, the robot triggers a motion arm to
+     catch the ball.
 
   </description>
   <author>Florent Lamiraux</author>
@@ -11,8 +13,14 @@
   <url>http://ros.org/wiki/ball_reaching</url>
   <depend package="dynamic_graph_bridge"/>
   <depend package="hueblob"/>
+  <depend package="actionlib"/>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="roslib"/>
+  <depend package="std_msgs"/>
+  <depend package="actionlib_msgs"/>
   <export>
-    <python path="${prefix}"/>
+    <python path="${prefix}:${prefix}/src"/>
   </export>
 </package>
 

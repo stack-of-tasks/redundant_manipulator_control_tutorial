@@ -2,14 +2,24 @@
      Launch ball catching tutorial for HRP2
   -->
 <launch>
-  <param name="robot_description"
-	 textfile="$(find hrp2_14_description)/urdf/hrp2.urdf" />
+  <arg name="robot_machine_profile" default="hrp2_14"/>
+  <arg name="stabilizer_enabled" default="true"/>
 
-  <include file="$(find openhrp_bridge)/launch/start.launch"/>
+  <include
+     file="$(find hrp2_bringup)/launch/openhrp_bridge.launch">
+    <arg name="robot_machine_profile" value="$(arg robot_machine_profile)"/>
+    <arg name="stabilizer_enabled" value="$(arg stabilizer_enabled)" />
+  </include>
   <include file="$(find hueblob)/launch/track2-nodelet.launch"/>
 
-  <node pkg="dynamic_graph_bridge" type="tf_broadcaster"
-	name="frame_broadcaster"
+  <node pkg="ball_reaching" type="hueblob.py"
+	name="hueblob"
 	machine="hrp2014v"
-	ns="dynamic_graph"/>
+	output="screen"/>
+  <node pkg="ball_reaching" type="watch_zone.py"
+	name="watch_zone"
+	machine="hrp2014v"
+	output="screen"/>
+  <node pkg="ball_reaching" type="supervisor.py"
+	name="supervisor" machine="hrp2014v" output="screen"/>
 </launch>

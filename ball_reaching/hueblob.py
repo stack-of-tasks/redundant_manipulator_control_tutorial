@@ -12,7 +12,7 @@ def publish () :
     print ("Starting hueblob")
     cameraName = "camera_bottom_left_optical"
     rospy.init_node ('tf_hueblob')
-    pub_world = rospy.Publisher ('/wide/blobs/rose/transform_world',
+    pub_world = rospy.Publisher ('/wide/blobs/rose/transform_base_link',
                                  TransformStamped)
     pub_camera = rospy.Publisher ('/wide/blobs/rose/transform',
                                   TransformStamped)
@@ -23,17 +23,12 @@ def publish () :
     rate = rospy.Rate (10)
     while not rospy.is_shutdown ():
         if listener.frameExists("roseball") and \
-                listener.frameExists("world"):
+                listener.frameExists("base_link"):
             try:
-                t = listener.getLatestCommonTime("roseball", "world")
+                t = listener.getLatestCommonTime("roseball", "base_link")
                 (translation, quaternion) = \
-                    listener.lookupTransform("world", "roseball", t)
-                print ("t={0}".format (t))
-                broadcaster.sendTransform (translation, quaternion,
-                                           rospy.Time.now (),
-                                           "roseball", "world")
-
-                # Position of rose ball in world frame as a topic
+                    listener.lookupTransform("base_link", "roseball", t)
+                # Position of rose ball in base_link frame as a topic
                 M.header.stamp = rospy.Time.now ()
                 (M.transform.translation.x,
                  M.transform.translation.y,
@@ -45,13 +40,8 @@ def publish () :
                 pub_world.publish (M)
                 rate.sleep ()
             except:
-                print ("No common time found.")
-        else:
-            if not listener.frameExists("roseball"):
-                print ("roseball frame does not seem to exist.")
-            if not listener.frameExists("world"):
-                print ("world frame does not seem to exist.")
-
+                pass
+            
 if __name__ == '__main__':
     try:
         publish ()

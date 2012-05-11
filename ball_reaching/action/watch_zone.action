@@ -1,0 +1,11 @@
+# goal definition
+float64 xCenter
+float64 yCenter
+float64 zCenter
+---
+# result 
+float64 distance
+---
+# feedback
+float64 distance
+

@@ -48,6 +48,7 @@ if __name__ == '__main__':
 
 class Motion (object):
     reachTime = 3.
+    stillTime = .5
     def __init__ (self, robot, solver):
         self.samplingPeriod = .005
         self.robot = robot
@@ -55,8 +56,8 @@ class Motion (object):
         self.ros = Ros (robot)
         self.ros.rosExport.add ('matrixHomoStamped', 'ballInCamera',
                                 '/wide/blobs/rose/transform')
-        self.ros.rosExport.add ('matrixHomoStamped', 'ballInWorld',
-                                '/wide/blobs/rose/transform_world')
+        self.ros.rosExport.add ('matrixHomoStamped', 'ballInWaist',
+                                '/wide/blobs/rose/transform_base_link')
         self.rightGripperId = 28
         # Right hand task
         self.featureRightHand = \
@@ -65,11 +66,15 @@ class Motion (object):
                              robot.frames ['rightHand'].jacobian)
         self.featureRightHand.selec.value = '000111'
 
+        # interpolation
+        self.prodSE3 = Multiply_of_matrixHomo ("prod SE3")
         self.interpolation = CylindricalCubicInterpolationSE3 ('interpolation')
         self.interpolation.setSamplingPeriod (self.samplingPeriod)
+        plug (self.robot.waist.position, self.prodSE3.sin1)
         plug (self.interpolation.reference,
               self.featureRightHand.signal('reference'))
-        plug (self.ros.rosExport.ballInWorld, self.interpolation.goal)
+        plug (self.ros.rosExport.ballInWaist, self.prodSE3.sin2)
+        plug (self.prodSE3.sout, self.interpolation.goal)
         plug (self.featureRightHand.position, self.interpolation.init)
         plug (self.robot.waist.position, self.interpolation.localFrame)
 
@@ -148,39 +153,11 @@ class Motion (object):
 
     def stopMotion (self):
         self.solver.remove (self.taskBallTracking)
-        plug (self.ros.rosExport.ballInWorld, self.interpolation.goal)
-
-    def waitForBall (self):
-        x = 0.4; y = -0.2; z = 1.2
-        t = self.taskRightHand.error.time
-        self.ros.rosExport.ballInWorld.recompute (t)
-        pos = map (lambda i:self.ros.rosExport.ballInWorld.value [i][3],
-                   range (3))
-        while (fabs((x-pos[0])*(x-pos[0]) + (y-pos[1])*(y-pos[1]) +
-                    (z-pos[2])*(z-pos[2])) > .0025):
-            time.sleep (.1)
-            t = self.taskRightHand.error.time
-            self.ros.rosExport.ballInWorld.recompute (t)
-            pos = map (lambda i:self.ros.rosExport.ballInWorld.value [i][3],
-                       range (3))
-        t_start = self.taskRightHand.error.time
-        # Ball is in neighborhood
-        while ((fabs((x-pos[0])*(x-pos[0]) + (y-pos[1])*(y-pos[1]) +
-                     (z-pos[2])*(z-pos[2])) <= .0025)):
-            time.sleep (.1)
-            t = self.taskRightHand.error.time
-            if (t - t_start)*self.samplingPeriod >= 1.:
-                return True
-            self.ros.rosExport.ballInWorld.recompute (t)
-            pos = map (lambda i:self.ros.rosExport.ballInWorld.value [i][3],
-                       range (3))
-        return False
+        plug (self.ros.rosExport.ballInWaist, self.interpolation.goal)
 
     def catchBall (self):
-        self.trackBall ()
+        #self.trackBall ()
         self.openHand ()
-        while not self.waitForBall ():
-            pass
         self.reach ()
         time.sleep (self.reachTime)
         self.closeHand ()
@@ -204,7 +181,7 @@ class Motion (object):
                 clt.updateElementConfig(rvName, toViewerConfig(config))
                 ballPos = []
                 for i in range (3):
-                    ballPos.append(self.ros.rosExport.ballInWorld.value[i][3])
+                    ballPos.append(self.ros.rosExport.ballInWaist.value[i][3])
                 ballPos.extend (3*[0])
                 clt.updateElementConfig("rose_ball", ballPos)
 

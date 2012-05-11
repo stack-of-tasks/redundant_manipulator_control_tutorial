@@ -7,6 +7,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/cpack.cmake)
 INCLUDE(cmake/python.cmake)
+INCLUDE($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 FINDPYTHON ()
 
@@ -30,9 +31,22 @@ PKG_CONFIG_APPEND_LIBS("sot-reaching")
 ADD_SUBDIRECTORY(src)
 
 INSTALL(FILES
-  ball_reaching.py
+  reach_ball.py
   DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/reaching
 )
 
 SETUP_PROJECT_FINALIZE()
 SETUP_PROJECT_CPACK()
+
+# Ros part
+ROSBUILD_FIND_ROS_PACKAGE(actionlib_msgs)
+INCLUDE(${actionlib_msgs_PACKAGE_PATH}/cmake/actionbuild.cmake)
+GENACTION()
+ROSBUILD_INIT()
+
+#set the default path for built executables to the "bin" directory
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+#set the default path for built libraries to the "lib" directory
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+
+ROSBUILD_GENMSG()

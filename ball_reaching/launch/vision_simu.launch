@@ -8,9 +8,9 @@
 	type="stereo_image_proc"
 	name="stereo_image_proc">
     <param name="approximate_sync" value="true"/>
-    <param name="disparity_range" value="128"/>
+    <param name="disparity_range" value="640"/>
   </node>
   <include file="$(find hueblob)/launch/track2-nodelet.launch"/>
   <node pkg="rosbag" type="play" name="rosbag"
-	args="-r 0.1 -l --clock $(find ball_reaching)/bag/2012-03-16-07-58-08.bag"/>
+	args="-r 1.0 --clock $(find ball_reaching)/bag/2012-05-09-13-28-59.bag"/>
 </launch>
