@@ -19,11 +19,6 @@ if __name__ == '__main__':
     client = actionlib.SimpleActionClient ('watch_zone', watch_zoneAction)
     client.wait_for_server ()
 
-    # Initialize start_dynamic_graph command
-    rospy.wait_for_service ("start_dynamic_graph")
-    start_dynamic_graph = rospy.ServiceProxy ("start_dynamic_graph", Empty)
-    result = start_dynamic_graph ()
-    rospy.loginfo ("start_dynamic_graph")
     # Initialize "run_command" client and stack of tasks
     rospy.wait_for_service ('run_command')
     run_command = rospy.ServiceProxy ('run_command', RunCommand)

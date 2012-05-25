@@ -11,7 +11,6 @@
     <arg name="stabilizer_enabled" value="$(arg stabilizer_enabled)" />
   </include>
   <include file="$(find hueblob)/launch/track2-nodelet.launch"/>
-
   <node pkg="ball_reaching" type="hueblob.py"
 	name="hueblob"
 	machine="hrp2014v"
@@ -22,4 +21,6 @@
 	output="screen"/>
   <node pkg="ball_reaching" type="supervisor.py"
 	name="supervisor" machine="hrp2014v" output="screen"/>
+  <node name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam" args="load /wide/stereo_image_proc $(find ball_reaching)/param/disparity.yaml">
+  </node>
 </launch>
