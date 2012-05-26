@@ -13,7 +13,7 @@ class WatchZone (object):
     Action that consist of waiting for the rose ball to enter a sphere centered
     on the goal of the action.
     """
-    radius = .05
+    radius = .1
     _feedback = ball_reaching.msg.watch_zoneActionFeedback ()
     _result = ball_reaching.msg.watch_zoneResult ()
 
@@ -43,7 +43,7 @@ class WatchZone (object):
                     sqrt ((self.x - x0)*(self.x - x0) +
                           (self.y - y0)*(self.y - y0) +
                           (self.z - z0)*(self.z - z0))
-                if (self._feedback.feedback.distance < .05) :
+                if (self._feedback.feedback.distance < self.radius) :
                     self._result.distance = self._feedback.feedback.distance
                     success = True
                 log += 1

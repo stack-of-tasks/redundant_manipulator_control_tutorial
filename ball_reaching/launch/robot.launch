@@ -3,16 +3,13 @@
   -->
 <launch>
   <arg name="robot_machine_profile" default="hrp2_14"/>
-  <arg name="stabilizer_enabled" default="true"/>
-
   <include
-     file="$(find hrp2_bringup)/launch/openhrp_bridge.launch">
+     file="$(find hrp2_bringup)/launch/common.launch">
     <arg name="robot_machine_profile" value="$(arg robot_machine_profile)"/>
-    <arg name="stabilizer_enabled" value="$(arg stabilizer_enabled)" />
   </include>
   <include file="$(find hueblob)/launch/track2-nodelet.launch"/>
   <node pkg="ball_reaching" type="hueblob.py"
-	name="hueblob"
+	name="ball_in_waist"
 	machine="hrp2014v"
 	output="screen"/>
   <node pkg="ball_reaching" type="watch_zone.py"
@@ -21,6 +18,6 @@
 	output="screen"/>
   <node pkg="ball_reaching" type="supervisor.py"
 	name="supervisor" machine="hrp2014v" output="screen"/>
-  <node name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam" args="load /wide/stereo_image_proc $(find ball_reaching)/param/disparity.yaml">
+  <node name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam" args="load /wide/disparity $(find ball_reaching)/param/disparity.yaml">
   </node>
 </launch>

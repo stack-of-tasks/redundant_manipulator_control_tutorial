@@ -1,0 +1,138 @@
+digraph CD {
+"featureBallInCamera" [ label = "featureBallInCamera" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_cameraTopRight" -> "featureBallInCamera"
+	 [ headlabel = "Jq" , taillabel = "jacobian", fontsize=7, fontcolor=red ]
+	"pinholeProjection" -> "featureBallInCamera"
+	 [ headlabel = "xy" , taillabel = "xy", fontsize=7, fontcolor=red ]
+	"featureBallInCameraRef" -> "featureBallInCamera"[ color=darkseagreen4 ]
+featureBallInCameraRef [ label = "featureBallInCameraRef" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+featurePosture [ label = "featurePosture" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_device" -> "featurePosture"
+	 [ headlabel = "state" , taillabel = "state", fontsize=7, fontcolor=red ]
+featureRightHand [ label = "featureRightHand" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_rightHand" -> "featureRightHand"
+	 [ headlabel = "position, jacobian", fontsize=7, fontcolor=red ]
+	"interpolation" -> "featureRightHand"
+	 [ headlabel = "reference", fontsize=7, fontcolor=red ]
+interpolation [ label = "interpolation" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"rosExport" -> "prodSE3"
+	 [ headlabel = "goal" , taillabel = "ballInWaist", fontsize=7, fontcolor=red ]
+	"featureRightHand" -> "interpolation"
+	 [ headlabel = "init" , taillabel = "position", fontsize=7, fontcolor=red ]
+	"robot_feature_waist" -> "interpolation"
+	 [ headlabel = "localFrame" , taillabel = "position", fontsize=7, fontcolor=red ]
+joint_limitator [ label = "joint_limitator" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"solver" -> "joint_limitator"
+	 [ headlabel = "controlIN" , taillabel = "control", fontsize=7, fontcolor=red ]
+	"robot_dynamic" -> "joint_limitator"
+	 [ headlabel = "joint" , taillabel = "position", fontsize=7, fontcolor=red ]
+	"robot_dynamic" -> "joint_limitator"
+	 [ headlabel = "lowerJl" , taillabel = "lowerJl", fontsize=7, fontcolor=red ]
+	"robot_dynamic" -> "joint_limitator"
+	 [ headlabel = "upperJl" , taillabel = "upperJl", fontsize=7, fontcolor=red ]
+pinholeProjection [ label = "pinholeProjection" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"rosExport" -> "pinholeProjection"
+	 [ headlabel = "cMo" , taillabel = "ballInCamera", fontsize=7, fontcolor=red ]
+	"rosExport" -> "pinholeProjection"
+	 [ headlabel = "cMoTimestamp" , taillabel = "ballInCameraTimestamp", fontsize=7, fontcolor=red ]
+	"rosTime" -> "pinholeProjection"
+	 [ headlabel = "time" , taillabel = "time", fontsize=7, fontcolor=red ]
+postureTask [ label = "postureTask" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"featurePosture" -> "postureTask"
+	 [ headlabel = "jacobianIN" , taillabel = "Jgaze", fontsize=7, fontcolor=red ]
+robot_cameraTopRight [ label = "robot_cameraTopRight" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_dynamic" -> "robot_cameraTopRight"
+	 [ headlabel = "jacobianIN" , taillabel = "Jgaze", fontsize=7, fontcolor=red ]
+	"robot_dynamic" -> "robot_cameraTopRight"
+	 [ headlabel = "positionIN" , taillabel = "gaze", fontsize=7, fontcolor=red ]
+robot_device [ label = "robot_device" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"joint_limitator" -> "robot_device"
+	 [ headlabel = "control" , taillabel = "control", fontsize=7, fontcolor=red ]
+robot_dynamic [ label = "robot_dynamic" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_device" -> "robot_dynamic"
+	 [ headlabel = "position" , taillabel = "state", fontsize=7, fontcolor=red ]
+robot_feature_com [ label = "robot_feature_com" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_dynamic" -> "robot_feature_com"
+	 [ headlabel = "errorIN" , taillabel = "com", fontsize=7, fontcolor=red ]
+	"robot_dynamic" -> "robot_feature_com"
+	 [ headlabel = "jacobianIN" , taillabel = "Jcom", fontsize=7, fontcolor=red ]
+robot_feature_left_ankle [ label = "robot_feature_left_ankle" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_dynamic" -> "robot_feature_left_ankle"
+	 [ headlabel = "Jq" , taillabel = "Jleft_ankle", fontsize=7, fontcolor=red ]
+	"robot_dynamic" -> "robot_feature_left_ankle"
+	 [ headlabel = "position" , taillabel = "left_ankle", fontsize=7, fontcolor=red ]
+robot_feature_right_ankle [ label = "robot_feature_right_ankle" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_dynamic" -> "robot_feature_right_ankle"
+	 [ headlabel = "Jq" , taillabel = "Jright_ankle", fontsize=7, fontcolor=red ]
+	"robot_dynamic" -> "robot_feature_right_ankle"
+	 [ headlabel = "position" , taillabel = "right_ankle", fontsize=7, fontcolor=red ]
+robot_feature_waist [ label = "robot_feature_waist" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_dynamic" -> "robot_feature_waist"
+	 [ headlabel = "Jq" , taillabel = "Jwaist", fontsize=7, fontcolor=red ]
+	"robot_dynamic" -> "robot_feature_waist"
+	 [ headlabel = "position" , taillabel = "waist", fontsize=7, fontcolor=red ]
+robot_rightHand [ label = "robot_rightHand" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_dynamic" -> "robot_rightHand"
+	 [ headlabel = "jacobianIN" , taillabel = "Jright_wrist", fontsize=7, fontcolor=red ]
+	"robot_dynamic" -> "robot_rightHand"
+	 [ headlabel = "positionIN" , taillabel = "right_wrist", fontsize=7, fontcolor=red ]
+robot_task_balance [ label = "robot_task_balance" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_feature_com" -> "robot_task_balance"
+	"robot_feature_left_ankle" -> "robot_task_balance"
+	"robot_feature_right_ankle" -> "robot_task_balance"
+robot_task_waist [ label = "robot_task_waist" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_feature_waist" -> "robot_task_waist"
+rosExport [ label = "rosExport" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+rosJointState [ label = "rosJointState" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"robot_device" -> "rosJointState"
+	 [ headlabel = "state" , taillabel = "state", fontsize=7, fontcolor=red ]
+rosTime [ label = "rosTime" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+solver [ label = "solver" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+			robot_task_balance -> taskRightHand [color=red]
+			taskRightHand -> robot_task_waist [color=red]
+			robot_task_waist -> postureTask [color=red]
+		subgraph cluster_Tasks {
+			subgraph cluster_solver {
+				color=lightsteelblue1; label="solver"; style=filled;
+				robot_task_balance [ label = "robot_task_balance" ,
+				   fontcolor = black, color = black, fillcolor = magenta, style=filled, shape=box ]
+				taskRightHand [ label = "taskRightHand" ,
+				   fontcolor = black, color = black, fillcolor = magenta, style=filled, shape=box ]
+				robot_task_waist [ label = "robot_task_waist" ,
+				   fontcolor = black, color = black, fillcolor = magenta, style=filled, shape=box ]
+				postureTask [ label = "postureTask" ,
+				   fontcolor = black, color = black, fillcolor = magenta, style=filled, shape=box ]
+			}
+			}
+taskBallTracking [ label = "taskBallTracking" ,
+   fontcolor = black, color = black, fillcolor=cyan, style=filled, shape=box ]
+	"featureBallInCamera" -> "taskBallTracking"
+	"featureRightHand" -> "taskRightHand"
+
+prodSE3 [ label="prod SE3", fontcolor=black, color = black, fillcolor = cyan,
+	style = filled, shape=box]
+	"robot_dynamic" -> "prodSE3" [ headlabel = "waist", fontsize=7, fontcolor=red ]
+	"prodSE3" -> "interpolation" [ headlabel = "goal", fontsize=7, fontcolor=red ]
+}

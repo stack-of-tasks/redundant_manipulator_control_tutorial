@@ -12,5 +12,5 @@
   </node>
   <include file="$(find hueblob)/launch/track2-nodelet.launch"/>
   <node pkg="rosbag" type="play" name="rosbag"
-	args="-r 1.0 --clock $(find ball_reaching)/bag/2012-05-09-13-28-59.bag"/>
+	args="-r 0.2 --clock $(find ball_reaching)/bag/2012-05-09-13-28-59.bag"/>
 </launch>
