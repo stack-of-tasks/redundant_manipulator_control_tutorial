@@ -145,11 +145,12 @@ class Motion (object):
 
     def moveBack (self):
         # move hand back
-        self.postureTask.controlGain.value = 1.
+        self.postureTask.controlGain.value = 0.
         for dof in range (6, len (self.posture)):
             self.featurePosture.selectDof (dof, True)
-        #self.interpolation.goal.value = self.handInitPos
-        #self.interpolation.start (2.)
+        self.interpolation.goal.value = self.handInitPos
+        self.postureTask.controlGain.value = 3.
+        self.interpolation.start (2.)
 
     def stopMotion (self):
         self.solver.remove (self.taskBallTracking)
