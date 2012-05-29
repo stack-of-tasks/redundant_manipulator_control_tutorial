@@ -13,27 +13,27 @@
 namespace dynamicgraph {
   namespace sot {
     namespace reaching {
-      DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(CylindricalCubicInterpolation,
+      DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(CylindricalCubicInterpolationSE3,
 					 "CylindricalCubicInterpolationSE3");
-      CylindricalCubicInterpolation::
-      CylindricalCubicInterpolation (const std::string& name) :
-	CubicInterpolation (name),
-	localFrameSIN_ (NULL, "CylindricalCubicInterpolation("+name+
+      CylindricalCubicInterpolationSE3::
+      CylindricalCubicInterpolationSE3 (const std::string& name) :
+	CubicInterpolationSE3 (name),
+	localFrameSIN_ (NULL, "CylindricalCubicInterpolationSE3("+name+
 			")::input(MatrixHomo)::localFrame"),
 	globalPos_ (3)
       {
 	signalRegistration (localFrameSIN_);
-	referenceSOUT_.setFunction (boost::bind (&CylindricalCubicInterpolation::
+	referenceSOUT_.setFunction (boost::bind (&CylindricalCubicInterpolationSE3::
 						 computeReference,
 						 this, _1, _2));
 	initialChestPose_.setIdentity ();
       }
 
-      CylindricalCubicInterpolation::~CylindricalCubicInterpolation ()
+      CylindricalCubicInterpolationSE3::~CylindricalCubicInterpolationSE3 ()
       {
       }
 
-      std::string CylindricalCubicInterpolation::getDocString () const
+      std::string CylindricalCubicInterpolationSE3::getDocString () const
       {
 	std::string doc =
 	  "Perform a cubic interpolation in cylindrical coordinate in SE(3).\n"
@@ -54,7 +54,7 @@ namespace dynamicgraph {
       }
 
       sot::MatrixHomogeneous&
-      CylindricalCubicInterpolation::computeReference (sot::MatrixHomogeneous&
+      CylindricalCubicInterpolationSE3::computeReference (sot::MatrixHomogeneous&
 						     reference, const int& time)
       {
 	if (!motionStarted_) {
@@ -82,7 +82,7 @@ namespace dynamicgraph {
 	return reference;
       }
 
-      void CylindricalCubicInterpolation::doStart (const double& duration)
+      void CylindricalCubicInterpolationSE3::doStart (const double& duration)
       {
 	// Check that sampling period has been initialized
 	if (samplingPeriod_ <= 0)

@@ -12,12 +12,12 @@
 namespace dynamicgraph {
   namespace sot {
     namespace reaching {
-      class CylindricalCubicInterpolation : public CubicInterpolation
+      class CylindricalCubicInterpolationSE3 : public CubicInterpolationSE3
       {
 	DYNAMIC_GRAPH_ENTITY_DECL();
       public:
-	virtual ~CylindricalCubicInterpolation ();
-	CylindricalCubicInterpolation (const std::string& name);
+	virtual ~CylindricalCubicInterpolationSE3 ();
+	CylindricalCubicInterpolationSE3 (const std::string& name);
 	/// Documentation
 	virtual std::string getDocString () const;
 	/// Start tracking
@@ -34,7 +34,7 @@ namespace dynamicgraph {
 	maal::boost::Vector cylindricalCoord_;
 	maal::boost::Vector globalPos_;
 
-      }; // class CylindricalCubicInterpolation
+      }; // class CylindricalCubicInterpolationSE3
     } // reaching
   } // namespace sot
 } // namespace dynamicgraph

@@ -13,16 +13,16 @@
 namespace dynamicgraph {
   namespace sot {
     namespace reaching {
-      DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(CubicInterpolation,
+      DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(CubicInterpolationSE3,
 					 "CubicInterpolationSE3");
-      CubicInterpolation::CubicInterpolation (const std::string& name) :
+      CubicInterpolationSE3::CubicInterpolationSE3 (const std::string& name) :
 	Entity (name),
-	referenceSOUT_ ("CubicInterpolation("+name+
+	referenceSOUT_ ("CubicInterpolationSE3("+name+
 			")::output(vector)::reference"),
-	errorDotSOUT_ ("CubicInterpolation("+name+
+	errorDotSOUT_ ("CubicInterpolationSE3("+name+
 			")::output(vector)::errorDot"),
-	initSIN_ (NULL, "CubicInterpolation("+name+")::input(vector)::init"),
-	goalSIN_ (NULL, "CubicInterpolation("+name+")::input(vector)::goal"),
+	initSIN_ (NULL, "CubicInterpolationSE3("+name+")::input(vector)::init"),
+	goalSIN_ (NULL, "CubicInterpolationSE3("+name+")::input(vector)::goal"),
 	startTime_ (0), samplingPeriod_ (0.), motionStarted_ (false),
 	p0_ (3), p1_ (3), p2_ (3), p3_ (3), position_ (3), errorDot_ (3)
       {
@@ -31,7 +31,7 @@ namespace dynamicgraph {
 	signalRegistration (initSIN_);
 	signalRegistration (goalSIN_);
 	referenceSOUT_.setFunction (boost::bind
-				    (&CubicInterpolation::computeReference,
+				    (&CubicInterpolationSE3::computeReference,
 				     this, _1, _2));
 	errorDot_.setZero ();
 	errorDotSOUT_.setConstant (errorDot_);
@@ -45,8 +45,8 @@ namespace dynamicgraph {
 	  "      - a floating point value.\n"
 	  "\n";
 	addCommand ("setSamplingPeriod",
-		    new command::Setter <CubicInterpolation, double>
-		    (*this, &CubicInterpolation::setSamplingPeriod, docstring));
+		    new command::Setter <CubicInterpolationSE3, double>
+		    (*this, &CubicInterpolationSE3::setSamplingPeriod, docstring));
 	docstring =
 	  "\n"
 	  "    Start tracking.\n"
@@ -57,15 +57,15 @@ namespace dynamicgraph {
 	  "\n  Read init and goal signals, compute reference tracjectory and start\n"
 	  "tracking.\n";
 	addCommand ("start",
-		    new command::Setter <CubicInterpolation, double>
-		    (*this, &CubicInterpolation::start, docstring));
+		    new command::Setter <CubicInterpolationSE3, double>
+		    (*this, &CubicInterpolationSE3::start, docstring));
       }
 
-      CubicInterpolation::~CubicInterpolation ()
+      CubicInterpolationSE3::~CubicInterpolationSE3 ()
       {
       }
 
-      std::string CubicInterpolation::getDocString () const
+      std::string CubicInterpolationSE3::getDocString () const
       {
 	std::string doc =
 	  "Perform a cubic interpolation in SE(3) between two poses.\n"
@@ -79,7 +79,7 @@ namespace dynamicgraph {
       }
 
       sot::MatrixHomogeneous&
-      CubicInterpolation::computeReference (sot::MatrixHomogeneous&
+      CubicInterpolationSE3::computeReference (sot::MatrixHomogeneous&
 					    reference, const int& time)
       {
 	if (!motionStarted_) {
@@ -104,17 +104,17 @@ namespace dynamicgraph {
 	return reference;
       }
 
-      void CubicInterpolation::setSamplingPeriod (const double& period)
+      void CubicInterpolationSE3::setSamplingPeriod (const double& period)
       {
 	samplingPeriod_ = period;
       }
 
-      void CubicInterpolation::start (const double& duration)
+      void CubicInterpolationSE3::start (const double& duration)
       {
 	doStart (duration);
       }
 
-      void CubicInterpolation::doStart (const double& duration)
+      void CubicInterpolationSE3::doStart (const double& duration)
       {
 	// Check that sampling period has been initialized
 	if (samplingPeriod_ <= 0)

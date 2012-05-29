@@ -17,12 +17,12 @@
 namespace dynamicgraph {
   namespace sot {
     namespace reaching {
-      class CubicInterpolation : public Entity
+      class CubicInterpolationSE3 : public Entity
       {
 	DYNAMIC_GRAPH_ENTITY_DECL();
       public:
-	virtual ~CubicInterpolation ();
-	CubicInterpolation (const std::string& name);
+	virtual ~CubicInterpolationSE3 ();
+	CubicInterpolationSE3 (const std::string& name);
 	/// Start tracking
 	void start (const double& duration);
 	/// Documentation
@@ -51,7 +51,7 @@ namespace dynamicgraph {
 
 	maal::boost::Vector position_;
 	maal::boost::Vector errorDot_;
-      }; // class CubicInterpolation
+      }; // class CubicInterpolationSE3
     } // reaching
   } // namespace sot
 } // namespace dynamicgraph
